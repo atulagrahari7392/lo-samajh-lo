@@ -1,0 +1,16 @@
+/vendor
+/node_modules
+/public/storage
+/storage/*.key
+.env
+.env.*
+!.env.example
+.git
+.gitignore
+.dockerignore
+Dockerfile
+docker-compose.yml
+docker-entrypoint.sh
+render.yaml
+README.md
+INSTALLATION.md
