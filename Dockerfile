@@ -5,6 +5,8 @@ FROM php:8.3-apache
 RUN apt-get update && apt-get install -y \
     git \
     curl \
+    sqlite3 \
+    libsqlite3-dev \
     libpng-dev \
     libjpeg-dev \
     libfreetype6-dev \
@@ -17,7 +19,7 @@ RUN apt-get update && apt-get install -y \
 
 # Configure & Install PHP Extensions required by Laravel 11
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install pdo pdo_mysql mbstring exif pcntl bcmath gd zip xml
+    && docker-php-ext-install pdo pdo_mysql pdo_sqlite mbstring exif pcntl bcmath gd zip xml
 
 # Enable Apache mod_rewrite
 RUN a2enmod rewrite
@@ -39,9 +41,11 @@ COPY . .
 # Install production dependencies without dev packages
 RUN composer install --no-dev --optimize-autoloader --no-interaction
 
-# Set correct file permissions for storage and bootstrap/cache
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache \
-    && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+# Set correct file permissions for storage, database, and bootstrap/cache
+RUN mkdir -p /var/www/html/database \
+    && touch /var/www/html/database/database.sqlite \
+    && chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/database \
+    && chmod -R 777 /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/database
 
 # Copy entrypoint script and grant execution permissions
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
