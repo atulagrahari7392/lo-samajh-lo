@@ -1,44 +1,53 @@
 #!/bin/bash
 set -e
 
-# Configure Apache port based on PORT environment variable provided by Render / Railway (fallback to 80)
+# 1. Configure Apache port based on PORT environment variable provided by Railway / Render (fallback to 80)
 PORT="${PORT:-80}"
-sed -i "s/80/${PORT}/g" /etc/apache2/ports.conf 2>/dev/null || true
-sed -i "s/80/${PORT}/g" /etc/apache2/sites-available/000-default.conf 2>/dev/null || true
+echo "Configuring Apache to listen on port ${PORT}..."
+sed -i "s/Listen 80/Listen ${PORT}/g" /etc/apache2/ports.conf 2>/dev/null || true
+sed -i "s/<VirtualHost \*:80>/<VirtualHost \*:${PORT}>/g" /etc/apache2/sites-available/000-default.conf 2>/dev/null || true
 
-# Ensure SQLite database file exists if using sqlite
-if [ "${DB_CONNECTION}" = "sqlite" ] || [ -z "${DB_CONNECTION}" ]; then
-    DB_FILE="${DB_DATABASE:-/var/www/html/database/database.sqlite}"
-    if [ ! -f "$DB_FILE" ]; then
-        echo "Creating SQLite database at $DB_FILE..."
-        mkdir -p "$(dirname "$DB_FILE")"
-        touch "$DB_FILE"
+# 2. Ensure .env exists if missing
+if [ ! -f /var/www/html/.env ]; then
+    echo "Creating .env from .env.example..."
+    if [ -f /var/www/html/.env.example ]; then
+        cp /var/www/html/.env.example /var/www/html/.env
+    else
+        touch /var/www/html/.env
     fi
-    chown -R www-data:www-data /var/www/html/database
-    chmod -R 777 /var/www/html/database
 fi
 
-# Set proper permissions for storage and bootstrap cache
-chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
-chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+# 3. Ensure SQLite database file exists and permissions are 777 for www-data
+DB_FILE="${DB_DATABASE:-/var/www/html/database/database.sqlite}"
+echo "Ensuring SQLite database file at $DB_FILE..."
+mkdir -p "$(dirname "$DB_FILE")"
+touch "$DB_FILE"
+chown -R www-data:www-data /var/www/html/database /var/www/html/storage /var/www/html/bootstrap/cache
+chmod -R 777 /var/www/html/database /var/www/html/storage /var/www/html/bootstrap/cache
 
-# Create storage symlink if missing
+# 4. Create storage symlink
 php artisan storage:link --force || true
 
-# Generate APP_KEY if missing
-if [ -z "$APP_KEY" ]; then
+# 5. Generate APP_KEY if missing
+if [ -z "$APP_KEY" ] && ! grep -q "^APP_KEY=base64" /var/www/html/.env; then
     echo "Generating Application Key..."
     php artisan key:generate --force || true
 fi
 
-# Run database migrations and demo seeder automatically
+# 6. Run database migrations and demo seeder automatically
+echo "Running migrations and seeders..."
 php artisan migrate --force || true
 php artisan db:seed --class=DemoUserSeeder --force || true
 
-# Run Laravel optimizations
+# 7. Re-apply permissions after artisan commands
+chown -R www-data:www-data /var/www/html/database /var/www/html/storage /var/www/html/bootstrap/cache
+chmod -R 777 /var/www/html/database /var/www/html/storage /var/www/html/bootstrap/cache
+
+# 8. Clear and cache configurations
 php artisan config:cache || true
 php artisan route:cache || true
 php artisan view:cache || true
 
-# Execute Apache in foreground
+# 9. Execute Apache in foreground
+echo "Starting Apache web server on port ${PORT}..."
 exec apache2-foreground
