@@ -10,6 +10,20 @@ use Illuminate\Http\Request;
 
 class HomeController extends Controller
 {
+    public function healthcheck()
+    {
+        return response('OK', 200);
+    }
+
+    public function switchLang($locale)
+    {
+        if (in_array($locale, ['en', 'hi'])) {
+            session()->put('locale', $locale);
+            app()->setLocale($locale);
+        }
+        return redirect()->back();
+    }
+
     public function index()
     {
         $featuredCourses = Course::where('is_published', true)->take(6)->get();

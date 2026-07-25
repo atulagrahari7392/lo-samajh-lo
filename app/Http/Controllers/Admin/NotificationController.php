@@ -8,6 +8,11 @@ use Illuminate\Http\Request;
 
 class NotificationController extends Controller
 {
+    public function index()
+    {
+        return view('admin.notifications.index');
+    }
+
     public function send(Request $request)
     {
         $request->validate(['title' => 'required', 'message' => 'required', 'target' => 'required|in:all,student,teacher']);

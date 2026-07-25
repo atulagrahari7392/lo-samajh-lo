@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\CurrentAffairsController;
 use App\Http\Controllers\Admin\NoteController;
 use App\Http\Controllers\Admin\LiveClassController;
 use App\Http\Controllers\Admin\CouponController;
+use App\Http\Controllers\Admin\NotificationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -67,8 +68,6 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::post('/settings', [SettingController::class, 'update'])->name('settings.update');
 
     // Notifications
-    Route::get('/notifications', function () {
-        return view('admin.notifications.index');
-    })->name('notifications');
-    Route::post('/notifications/send', [\App\Http\Controllers\Admin\NotificationController::class, 'send'])->name('notifications.send');
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications');
+    Route::post('/notifications/send', [NotificationController::class, 'send'])->name('notifications.send');
 });

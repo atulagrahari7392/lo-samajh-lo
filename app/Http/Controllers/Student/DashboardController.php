@@ -26,4 +26,19 @@ class DashboardController extends Controller
 
         return view('student.dashboard', compact('user', 'enrollments', 'recentTests', 'notifications', 'stats'));
     }
+
+    public function studyPlan()
+    {
+        return view('student.study-plan');
+    }
+
+    public function bookmarks()
+    {
+        return view('student.bookmarks');
+    }
+
+    public function referral()
+    {
+        return view('student.referral');
+    }
 }

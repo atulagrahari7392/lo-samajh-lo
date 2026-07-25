@@ -19,9 +19,7 @@ use App\Http\Controllers\Auth\GoogleAuthController;
 */
 
 // Healthcheck Route (for Railway & Render)
-Route::get('/up', function () {
-    return response('OK', 200);
-});
+Route::get('/up', [HomeController::class, 'healthcheck'])->name('healthcheck');
 
 // ══════════════════════════════════
 // PUBLIC ROUTES
@@ -80,13 +78,7 @@ Route::middleware('guest')->group(function () {
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout')->middleware('auth');
 
 // Language Switcher
-Route::get('/lang/{locale}', function ($locale) {
-    if (in_array($locale, ['en', 'hi'])) {
-        session()->put('locale', $locale);
-        app()->setLocale($locale);
-    }
-    return redirect()->back();
-})->name('lang.switch');
+Route::get('/lang/{locale}', [HomeController::class, 'switchLang'])->name('lang.switch');
 
 // Password Reset
 Route::get('/reset-password/{token}', [\App\Http\Controllers\Auth\ForgotPasswordController::class, 'showReset'])->name('password.reset');

@@ -66,17 +66,11 @@ Route::middleware(['auth'])->prefix('student')->name('student.')->group(function
     Route::post('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password');
 
     // Study Plan
-    Route::get('/study-plan', function () {
-        return view('student.study-plan');
-    })->name('study-plan');
+    Route::get('/study-plan', [DashboardController::class, 'studyPlan'])->name('study-plan');
 
     // Bookmarks
-    Route::get('/bookmarks', function () {
-        return view('student.bookmarks');
-    })->name('bookmarks');
+    Route::get('/bookmarks', [DashboardController::class, 'bookmarks'])->name('bookmarks');
 
     // Referral
-    Route::get('/referral', function () {
-        return view('student.referral');
-    })->name('referral');
+    Route::get('/referral', [DashboardController::class, 'referral'])->name('referral');
 });
