@@ -18,6 +18,11 @@ use App\Http\Controllers\Auth\GoogleAuthController;
 |--------------------------------------------------------------------------
 */
 
+// Healthcheck Route (for Railway & Render)
+Route::get('/up', function () {
+    return response('OK', 200);
+});
+
 // ══════════════════════════════════
 // PUBLIC ROUTES
 // ══════════════════════════════════
