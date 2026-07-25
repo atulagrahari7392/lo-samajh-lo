@@ -1,7 +1,7 @@
 # Production-Ready PHP 8.3 + Apache Dockerfile for Laravel 11
 FROM php:8.3-apache
 
-# Install system dependencies and required PHP extension libraries
+# Install system dependencies, SQLite, and required PHP extension libraries
 RUN apt-get update && apt-get install -y \
     git \
     curl \
@@ -41,15 +41,15 @@ COPY . .
 # Install production dependencies without dev packages
 RUN composer install --no-dev --optimize-autoloader --no-interaction
 
-# Set correct file permissions for storage, database, and bootstrap/cache
+# Ensure database directory and sqlite file exist with permissions
 RUN mkdir -p /var/www/html/database \
     && touch /var/www/html/database/database.sqlite \
     && chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/database \
     && chmod -R 777 /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/database
 
-# Copy entrypoint script and grant execution permissions
+# Copy entrypoint script, convert Windows CRLF line endings to LF, and grant execution permissions
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
-RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+RUN sed -i 's/\r$//' /usr/local/bin/docker-entrypoint.sh && chmod +x /usr/local/bin/docker-entrypoint.sh
 
 # Expose default HTTP port
 EXPOSE 80
