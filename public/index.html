@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lo Samajh Lo — India's #1 Learning Platform</title>
-    <meta name="description" content="India's next generation learning platform for graduation, post graduation and competitive exams. Study smarter, score higher.">
+    <title>Lo Samajh Lo — Admin Portal & LMS Dashboard</title>
+    <meta name="description" content="Yuva Setu Style LMS Admin Management Portal for Lo Samajh Lo.">
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -36,245 +36,309 @@
         .grad-text { background: linear-gradient(135deg, #38BDF8 0%, #2563EB 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .btn-grad { background: linear-gradient(135deg, #38BDF8 0%, #2563EB 100%); }
         .btn-grad:hover { background: linear-gradient(135deg, #0EA5E9 0%, #1D4ED8 100%); }
+        .sidebar-active { background: rgba(56, 189, 248, 0.15); color: #38BDF8; border-right: 4px solid #38BDF8; font-weight: 700; }
     </style>
 </head>
 <body x-data="appData()" class="bg-slate-50 dark:bg-navy-950 text-slate-900 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-300">
 
     <!-- 🌐 STICKY HEADER -->
-    <header class="sticky top-0 z-50 bg-white/80 dark:bg-navy-900/80 backdrop-blur-xl border-b border-slate-200 dark:border-slate-800 transition-colors">
+    <header class="sticky top-0 z-50 bg-white/90 dark:bg-navy-900/90 backdrop-blur-xl border-b border-slate-200 dark:border-slate-800">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
             <!-- Logo -->
             <a href="#" @click="activeTab = 'home'" class="flex items-center gap-3">
                 <div class="w-10 h-10 rounded-xl btn-grad flex items-center justify-center font-black text-white text-lg shadow-lg shadow-sky-500/25">LS</div>
                 <div>
                     <span class="font-black text-xl text-slate-900 dark:text-white tracking-tight">Lo Samajh Lo</span>
-                    <span class="block text-[10px] text-sky-500 font-bold uppercase tracking-wider -mt-1" x-text="lang === 'hi' ? 'भारत #1 लर्निंग ऐप' : 'INDIA\'S #1 LEARNING PLATFORM'"></span>
+                    <span class="block text-[10px] text-sky-500 font-bold uppercase tracking-wider -mt-1">YUVVA SETU LMS PORTAL</span>
                 </div>
             </a>
 
             <!-- Navigation Links -->
             <nav class="hidden md:flex items-center gap-1">
-                <button @click="activeTab = 'home'" :class="activeTab === 'home' ? 'text-sky-500 font-bold bg-sky-50 dark:bg-sky-500/10' : 'text-slate-600 dark:text-slate-300 hover:text-sky-500'" class="px-3.5 py-2 rounded-xl text-sm transition-all" x-text="lang === 'hi' ? 'होम' : 'Home'"></button>
-                <button @click="activeTab = 'courses'" :class="activeTab === 'courses' ? 'text-sky-500 font-bold bg-sky-50 dark:bg-sky-500/10' : 'text-slate-600 dark:text-slate-300 hover:text-sky-500'" class="px-3.5 py-2 rounded-xl text-sm transition-all" x-text="lang === 'hi' ? 'कोर्स' : 'Courses'"></button>
-                <button @click="activeTab = 'tests'" :class="activeTab === 'tests' ? 'text-sky-500 font-bold bg-sky-50 dark:bg-sky-500/10' : 'text-slate-600 dark:text-slate-300 hover:text-sky-500'" class="px-3.5 py-2 rounded-xl text-sm transition-all" x-text="lang === 'hi' ? 'टेस्ट सीरीज' : 'Test Series'"></button>
-                <button @click="activeTab = 'aitutor'" :class="activeTab === 'aitutor' ? 'text-sky-500 font-bold bg-sky-50 dark:bg-sky-500/10' : 'text-slate-600 dark:text-slate-300 hover:text-sky-500'" class="px-3.5 py-2 rounded-xl text-sm transition-all flex items-center gap-1.5">
-                    <span>🤖</span> <span x-text="lang === 'hi' ? 'AI ट्यूटर' : 'AI Tutor'"></span>
+                <button @click="activeTab = 'home'" :class="activeTab === 'home' ? 'text-sky-500 font-bold bg-sky-50 dark:bg-sky-500/10' : 'text-slate-600 dark:text-slate-300 hover:text-sky-500'" class="px-3.5 py-2 rounded-xl text-sm transition-all">Home</button>
+                <button @click="activeTab = 'courses'" :class="activeTab === 'courses' ? 'text-sky-500 font-bold bg-sky-50 dark:bg-sky-500/10' : 'text-slate-600 dark:text-slate-300 hover:text-sky-500'" class="px-3.5 py-2 rounded-xl text-sm transition-all">Courses</button>
+                <button @click="activeTab = 'tests'" :class="activeTab === 'tests' ? 'text-sky-500 font-bold bg-sky-50 dark:bg-sky-500/10' : 'text-slate-600 dark:text-slate-300 hover:text-sky-500'" class="px-3.5 py-2 rounded-xl text-sm transition-all">Test Series</button>
+                <button @click="activeTab = 'aitutor'" :class="activeTab === 'aitutor' ? 'text-sky-500 font-bold bg-sky-50 dark:bg-sky-500/10' : 'text-slate-600 dark:text-slate-300 hover:text-sky-500'" class="px-3.5 py-2 rounded-xl text-sm transition-all">🤖 AI Tutor</button>
+
+                <!-- Admin Panel Button -->
+                <button @click="activeTab = 'admin'" :class="activeTab === 'admin' ? 'bg-red-500 text-white font-bold' : 'bg-red-500/10 text-red-400 font-bold hover:bg-red-500/20'" class="px-4 py-2 rounded-xl text-sm transition-all flex items-center gap-1.5 border border-red-500/30">
+                    <span>👑</span> <span>Admin Panel</span>
                 </button>
-                <button @click="activeTab = 'leaderboard'" :class="activeTab === 'leaderboard' ? 'text-sky-500 font-bold bg-sky-50 dark:bg-sky-500/10' : 'text-slate-600 dark:text-slate-300 hover:text-sky-500'" class="px-3.5 py-2 rounded-xl text-sm transition-all" x-text="lang === 'hi' ? 'लीडरबोर्ड' : 'Leaderboard'"></button>
-                
-                <!-- Admin Panel Tab (If logged in as Admin) -->
-                <template x-if="isLoggedIn && userRole === 'admin'">
-                    <button @click="activeTab = 'admin'" :class="activeTab === 'admin' ? 'text-red-500 font-bold bg-red-50 dark:bg-red-500/10' : 'text-red-400 font-bold hover:text-red-500'" class="px-3.5 py-2 rounded-xl text-sm transition-all flex items-center gap-1">
-                        <span>⚙️</span> <span>Admin Panel</span>
-                    </button>
-                </template>
             </nav>
 
-            <!-- Action Controls -->
+            <!-- Controls -->
             <div class="flex items-center gap-2.5">
-                <!-- Language Switcher -->
-                <button @click="toggleLang()" class="px-2.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-800 text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
-                    🌐 <span x-text="lang === 'en' ? 'हिन्दी' : 'English'"></span>
-                </button>
-
-                <!-- Dark Mode Toggle -->
                 <button @click="toggleDarkMode()" class="p-2 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
                     <span x-show="!darkMode">🌙</span>
                     <span x-show="darkMode">☀️</span>
                 </button>
 
-                <!-- Login / Admin Dashboard Toggle -->
                 <template x-if="!isLoggedIn">
-                    <div class="flex items-center gap-2">
-                        <button @click="showAuthModal = true; authMode = 'login'" class="px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-700 font-bold text-sm text-slate-800 dark:text-slate-200 hover:border-sky-400 transition" x-text="lang === 'hi' ? 'लॉगिन' : 'Log In'"></button>
-                        <button @click="showAuthModal = true; authMode = 'register'" class="px-4 py-2 rounded-xl btn-grad font-bold text-sm text-white shadow-md shadow-sky-500/20" x-text="lang === 'hi' ? 'रजिस्टर' : 'Sign Up'"></button>
-                    </div>
+                    <button @click="loginAs('admin@test.com', 'admin', 'Super Admin')" class="px-4 py-2 rounded-xl btn-grad font-bold text-sm text-white shadow-md">🔴 Admin Login</button>
                 </template>
 
                 <template x-if="isLoggedIn">
                     <div class="flex items-center gap-2">
                         <span class="text-xs font-bold text-sky-400" x-text="userName"></span>
-                        <button @click="logout()" class="px-3 py-1.5 rounded-xl bg-red-500/20 text-red-400 border border-red-500/30 text-xs font-bold hover:bg-red-500/30 transition">Logout</button>
+                        <button @click="logout()" class="px-3 py-1.5 rounded-xl bg-red-500/20 text-red-400 border border-red-500/30 text-xs font-bold">Logout</button>
                     </div>
                 </template>
             </div>
         </div>
     </header>
 
-    <!-- 🚀 MAIN CONTENT AREA (DYNAMIC SPA PAGES) -->
+    <!-- 🚀 MAIN CONTENT AREA -->
     <main class="flex-1">
 
         <!-- ==================== HOME PAGE ==================== -->
-        <div x-show="activeTab === 'home'" x-transition>
-            <!-- Hero Section -->
-            <section class="relative overflow-hidden pt-12 pb-20 lg:pt-20 lg:pb-28 bg-gradient-to-b from-sky-500/5 via-transparent to-transparent">
-                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center space-y-8">
-                    <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-sky-500/10 border border-sky-500/20 text-sky-600 dark:text-sky-400 text-xs font-bold uppercase tracking-wider">
-                        <span>🔥</span> <span x-text="lang === 'hi' ? 'ग्रेजुएशन, पीजी और कंपैटिटिव एग्जाम्स की सर्वश्रेष्ठ तैयारी' : 'Best Prep for Graduation, PG & Competitive Exams'"></span>
-                    </div>
-
-                    <h1 class="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight leading-none text-slate-900 dark:text-white">
-                        <span x-text="lang === 'hi' ? 'स्मार्ट पढ़ें, ऊंचा स्कोर करें' : 'Learn Smarter, Score Higher'"></span><br>
-                        <span class="grad-text">Lo Samajh Lo</span>
-                    </h1>
-
-                    <p class="max-w-2xl mx-auto text-base sm:text-xl text-slate-600 dark:text-slate-300 leading-relaxed font-normal"
-                       x-text="lang === 'hi' ? 'BA, BSc, BCom, MA, MSc, UGC NET, SSC, Banking और UPSC की तैयारी करें भारत के बेस्ट टीचर्स और Samajh AI Tutor के साथ।' : 'Master BA, BSc, BCom, MA, MSc, UGC NET, SSC, Banking & UPSC with top educators and AI-powered interactive learning.'">
-                    </p>
-
-                    <!-- CTAs -->
-                    <div class="flex flex-wrap justify-center gap-4 pt-2">
-                        <button @click="activeTab = 'courses'" class="px-8 py-4 rounded-2xl btn-grad font-bold text-white shadow-xl shadow-sky-500/25 hover:scale-105 transition-all" x-text="lang === 'hi' ? 'कोर्स देखें →' : 'Explore Courses →'"></button>
-                        <button @click="showAuthModal = true; authMode = 'login'" class="px-8 py-4 rounded-2xl bg-red-600 hover:bg-red-700 text-white font-bold shadow-xl flex items-center gap-2 hover:scale-105 transition-all">
-                            <span>⚙️</span> <span>Admin Panel Login</span>
-                        </button>
-                    </div>
-
-                    <!-- Trust Stats Counter -->
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto pt-10 border-t border-slate-200 dark:border-slate-800">
-                        <div><p class="text-3xl font-black text-sky-500">5M+</p><p class="text-xs text-slate-500 dark:text-slate-400 font-semibold mt-1">Students</p></div>
-                        <div><p class="text-3xl font-black text-blue-500">50,000+</p><p class="text-xs text-slate-500 dark:text-slate-400 font-semibold mt-1">Practice Qs</p></div>
-                        <div><p class="text-3xl font-black text-emerald-500">500+</p><p class="text-xs text-slate-500 dark:text-slate-400 font-semibold mt-1">Teachers</p></div>
-                        <div><p class="text-3xl font-black text-purple-500">98%</p><p class="text-xs text-slate-500 dark:text-slate-400 font-semibold mt-1">Success Rate</p></div>
-                    </div>
-                </div>
-            </section>
+        <div x-show="activeTab === 'home'" x-transition class="py-16 max-w-7xl mx-auto px-4 text-center space-y-8">
+            <span class="px-4 py-2 rounded-full bg-sky-500/10 border border-sky-500/20 text-sky-400 text-xs font-bold uppercase">India's #1 Learning Portal</span>
+            <h1 class="text-5xl font-black text-slate-900 dark:text-white leading-tight">Learn Smarter, Score Higher<br><span class="grad-text">Lo Samajh Lo LMS</span></h1>
+            <p class="text-slate-400 max-w-2xl mx-auto text-base">Graduation, Post Graduation & Competitive Exam prep with AI Tutor and Yuva Setu LMS Dashboard.</p>
+            <div class="flex justify-center gap-4">
+                <button @click="activeTab = 'admin'" class="px-8 py-4 rounded-2xl btn-grad font-bold text-white shadow-xl hover:scale-105 transition-transform flex items-center gap-2">
+                    <span>👑</span> <span>Open Yuva Setu Admin Panel</span>
+                </button>
+            </div>
         </div>
 
-        <!-- ==================== COURSES PAGE ==================== -->
-        <div x-show="activeTab === 'courses'" x-transition class="py-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-                <div>
-                    <h1 class="text-3xl font-black text-slate-900 dark:text-white" x-text="lang === 'hi' ? 'लोकप्रिय कोर्स' : 'Explore Courses'"></h1>
-                    <p class="text-slate-500 text-sm mt-1" x-text="lang === 'hi' ? 'भारत के सर्वश्रेष्ठ शिक्षकों से सीखें' : 'Learn from top educators across India'"></p>
+        <!-- ==================== YUVVA SETU STYLE ADMIN PANEL DASHBOARD ==================== -->
+        <div x-show="activeTab === 'admin'" x-transition class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+            
+            <!-- Admin Top Navigation Banner -->
+            <div class="bg-gradient-to-r from-slate-900 via-navy-900 to-slate-900 p-6 sm:p-8 rounded-3xl border border-slate-800 shadow-2xl flex flex-col md:flex-row items-center justify-between gap-6">
+                <div class="space-y-2 text-center md:text-left">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-500/20 border border-red-500/30 text-red-400 text-xs font-bold uppercase">
+                        👑 SUPER ADMIN DASHBOARD (YUVVA SETU EDITION)
+                    </div>
+                    <h1 class="text-3xl sm:text-4xl font-black text-white">Yuva Setu LMS Management Portal</h1>
+                    <p class="text-slate-400 text-xs sm:text-sm">Manage courses, test series, student enrollments, video lectures & platform earnings in real time.</p>
                 </div>
-                <template x-if="userRole === 'admin'">
-                    <button @click="showUploadCourseModal = true" class="px-5 py-2.5 rounded-xl btn-grad text-white font-bold text-sm shadow-md flex items-center gap-2">
-                        <span>➕</span> <span>Upload New Lecture / Course</span>
+
+                <!-- Quick Action Buttons -->
+                <div class="flex flex-wrap justify-center gap-3">
+                    <button @click="showUploadCourseModal = true" class="px-5 py-3 rounded-xl btn-grad font-bold text-white text-xs shadow-lg flex items-center gap-2 hover:scale-105 transition-transform">
+                        <span>📹</span> <span>+ Add New Course</span>
                     </button>
-                </template>
+                    <button @click="showUploadTestModal = true" class="px-5 py-3 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs shadow-lg flex items-center gap-2 hover:scale-105 transition-transform">
+                        <span>📝</span> <span>+ Create Test Series</span>
+                    </button>
+                    <button @click="showLiveClassModal = true" class="px-5 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-lg flex items-center gap-2 hover:scale-105 transition-transform">
+                        <span>🔴</span> <span>+ Schedule Live Class</span>
+                    </button>
+                </div>
             </div>
 
-            <!-- Course Grid -->
-            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                <template x-for="course in courses" :key="course.title">
-                    <div class="bg-white dark:bg-navy-900 rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm hover:shadow-2xl transition-all flex flex-col justify-between p-6">
-                        <div>
-                            <span class="px-3 py-1 rounded-full bg-sky-500/20 text-sky-400 text-xs font-bold border border-sky-500/30" x-text="course.category"></span>
-                            <h3 class="font-bold text-lg text-slate-900 dark:text-white mt-4" x-text="course.title"></h3>
-                            <p class="text-xs text-slate-400 mt-2" x-text="course.description"></p>
-                        </div>
-                        <div class="flex items-center justify-between pt-4 border-t border-slate-200 dark:border-slate-800 mt-4">
-                            <div>
-                                <span class="text-xs text-slate-400 block" x-text="'👨‍🏫 ' + course.teacher"></span>
-                                <span class="text-sm font-black text-sky-500" x-text="course.price"></span>
+            <!-- Yuva Setu Layout: Sidebar + Dashboard Body -->
+            <div class="flex flex-col lg:flex-row gap-8">
+                
+                <!-- Left Sidebar Navigation -->
+                <aside class="w-full lg:w-64 bg-white dark:bg-navy-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-4 space-y-1 shadow-xl flex-shrink-0">
+                    <p class="px-4 py-2 text-[10px] font-black text-slate-400 uppercase tracking-wider">Main Menu</p>
+
+                    <button @click="adminSubTab = 'overview'" :class="adminSubTab === 'overview' ? 'sidebar-active' : 'text-slate-400 hover:text-white'" class="w-full text-left px-4 py-3 rounded-2xl text-xs flex items-center gap-3 transition-all">
+                        <span>📊</span> <span>Dashboard Overview</span>
+                    </button>
+                    <button @click="adminSubTab = 'courses'" :class="adminSubTab === 'courses' ? 'sidebar-active' : 'text-slate-400 hover:text-white'" class="w-full text-left px-4 py-3 rounded-2xl text-xs flex items-center gap-3 transition-all">
+                        <span>📚</span> <span>Courses & Lectures</span>
+                    </button>
+                    <button @click="adminSubTab = 'tests'" :class="adminSubTab === 'tests' ? 'sidebar-active' : 'text-slate-400 hover:text-white'" class="w-full text-left px-4 py-3 rounded-2xl text-xs flex items-center gap-3 transition-all">
+                        <span>📝</span> <span>Test Series & PYQ</span>
+                    </button>
+                    <button @click="adminSubTab = 'students'" :class="adminSubTab === 'students' ? 'sidebar-active' : 'text-slate-400 hover:text-white'" class="w-full text-left px-4 py-3 rounded-2xl text-xs flex items-center gap-3 transition-all">
+                        <span>👨‍🎓</span> <span>Student Management</span>
+                    </button>
+                    <button @click="adminSubTab = 'teachers'" :class="adminSubTab === 'teachers' ? 'sidebar-active' : 'text-slate-400 hover:text-white'" class="w-full text-left px-4 py-3 rounded-2xl text-xs flex items-center gap-3 transition-all">
+                        <span>👨‍🏫</span> <span>Teachers & Payouts</span>
+                    </button>
+                    <button @click="adminSubTab = 'live'" :class="adminSubTab === 'live' ? 'sidebar-active' : 'text-slate-400 hover:text-white'" class="w-full text-left px-4 py-3 rounded-2xl text-xs flex items-center gap-3 transition-all">
+                        <span>🔴</span> <span>Live Classes</span>
+                    </button>
+                    <button @click="adminSubTab = 'payments'" :class="adminSubTab === 'payments' ? 'sidebar-active' : 'text-slate-400 hover:text-white'" class="w-full text-left px-4 py-3 rounded-2xl text-xs flex items-center gap-3 transition-all">
+                        <span>💰</span> <span>Payments & Revenue</span>
+                    </button>
+
+                    <p class="px-4 pt-4 py-2 text-[10px] font-black text-slate-400 uppercase tracking-wider">System</p>
+                    <a href="https://lo-samajh-lo-production.up.railway.app/admin/dashboard" target="_blank" class="w-full text-left px-4 py-3 rounded-2xl text-xs text-sky-400 hover:bg-sky-500/10 flex items-center gap-3 transition-all">
+                        <span>🚀</span> <span>Railway PHP Console</span>
+                    </a>
+                </aside>
+
+                <!-- Right Dashboard Workspace -->
+                <div class="flex-1 space-y-6">
+
+                    <!-- OVERVIEW SUB-TAB -->
+                    <div x-show="adminSubTab === 'overview'" class="space-y-6">
+                        <!-- Stats Grid -->
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                            <div class="bg-white dark:bg-navy-900 p-5 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-md">
+                                <span class="text-2xl">👨‍🎓</span>
+                                <p class="text-xs text-slate-400 font-bold mt-2">Total Students</p>
+                                <p class="text-2xl sm:text-3xl font-black text-sky-400 mt-1">5,000,000+</p>
                             </div>
-                            <button @click="alert('Enrolled in ' + course.title)" class="px-4 py-2 rounded-xl btn-grad text-white font-bold text-xs">Enroll Now</button>
+                            <div class="bg-white dark:bg-navy-900 p-5 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-md">
+                                <span class="text-2xl">📚</span>
+                                <p class="text-xs text-slate-400 font-bold mt-2">Active Courses</p>
+                                <p class="text-2xl sm:text-3xl font-black text-emerald-400 mt-1" x-text="courses.length"></p>
+                            </div>
+                            <div class="bg-white dark:bg-navy-900 p-5 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-md">
+                                <span class="text-2xl">📝</span>
+                                <p class="text-xs text-slate-400 font-bold mt-2">Test Series</p>
+                                <p class="text-2xl sm:text-3xl font-black text-purple-400 mt-1" x-text="testsList.length"></p>
+                            </div>
+                            <div class="bg-white dark:bg-navy-900 p-5 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-md">
+                                <span class="text-2xl">💰</span>
+                                <p class="text-xs text-slate-400 font-bold mt-2">Total Earnings</p>
+                                <p class="text-2xl sm:text-3xl font-black text-amber-400 mt-1">₹4,85,000</p>
+                            </div>
+                        </div>
+
+                        <!-- Recent Course Management Table -->
+                        <div class="bg-white dark:bg-navy-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 shadow-xl space-y-4">
+                            <div class="flex items-center justify-between">
+                                <h3 class="font-bold text-base text-slate-900 dark:text-white">📚 Uploaded Courses & Lectures</h3>
+                                <button @click="showUploadCourseModal = true" class="px-4 py-2 rounded-xl btn-grad text-white font-bold text-xs">+ Add Course</button>
+                            </div>
+
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left text-xs">
+                                    <thead class="bg-slate-100 dark:bg-slate-800/60 text-slate-400 uppercase">
+                                        <tr>
+                                            <th class="p-3">Course Title</th>
+                                            <th class="p-3">Category</th>
+                                            <th class="p-3">Teacher</th>
+                                            <th class="p-3">Price</th>
+                                            <th class="p-3">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+                                        <template x-for="c in courses" :key="c.title">
+                                            <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/40">
+                                                <td class="p-3 font-bold text-slate-800 dark:text-slate-200" x-text="c.title"></td>
+                                                <td class="p-3"><span class="px-2.5 py-1 rounded-full bg-sky-500/20 text-sky-400 font-bold" x-text="c.category"></span></td>
+                                                <td class="p-3 text-slate-400" x-text="c.teacher"></td>
+                                                <td class="p-3 font-bold text-emerald-400" x-text="c.price"></td>
+                                                <td class="p-3"><button @click="alert('Editing ' + c.title)" class="text-sky-400 font-bold hover:underline">Edit / Add Video</button></td>
+                                            </tr>
+                                        </template>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Recent Test Series Management Table -->
+                        <div class="bg-white dark:bg-navy-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 shadow-xl space-y-4">
+                            <div class="flex items-center justify-between">
+                                <h3 class="font-bold text-base text-slate-900 dark:text-white">📝 Active Test Series</h3>
+                                <button @click="showUploadTestModal = true" class="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs">+ Create Test</button>
+                            </div>
+
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left text-xs">
+                                    <thead class="bg-slate-100 dark:bg-slate-800/60 text-slate-400 uppercase">
+                                        <tr>
+                                            <th class="p-3">Test Name</th>
+                                            <th class="p-3">Type</th>
+                                            <th class="p-3">Questions</th>
+                                            <th class="p-3">Duration</th>
+                                            <th class="p-3">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+                                        <template x-for="t in testsList" :key="t.title">
+                                            <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/40">
+                                                <td class="p-3 font-bold text-slate-800 dark:text-slate-200" x-text="t.title"></td>
+                                                <td class="p-3"><span class="px-2.5 py-1 rounded-full bg-purple-500/20 text-purple-300 font-bold" x-text="t.type"></span></td>
+                                                <td class="p-3 text-slate-400" x-text="t.questions + ' Qs'"></td>
+                                                <td class="p-3 text-slate-400" x-text="t.time + ' mins'"></td>
+                                                <td class="p-3"><button @click="alert('Managing ' + t.title)" class="text-purple-400 font-bold hover:underline">Add Questions</button></td>
+                                            </tr>
+                                        </template>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- COURSES SUB-TAB -->
+                    <div x-show="adminSubTab === 'courses'" class="space-y-6">
+                        <div class="flex items-center justify-between">
+                            <h2 class="text-xl font-black text-white">📚 Full Course Manager</h2>
+                            <button @click="showUploadCourseModal = true" class="px-5 py-2.5 rounded-xl btn-grad text-white font-bold text-xs">+ Upload Course</button>
+                        </div>
+
+                        <div class="grid sm:grid-cols-2 gap-4">
+                            <template x-for="c in courses" :key="c.title">
+                                <div class="bg-white dark:bg-navy-900 rounded-3xl p-5 border border-slate-200 dark:border-slate-800 space-y-3">
+                                    <span class="px-3 py-1 rounded-full bg-sky-500/20 text-sky-400 text-xs font-bold" x-text="c.category"></span>
+                                    <h4 class="font-bold text-base text-white" x-text="c.title"></h4>
+                                    <p class="text-xs text-slate-400" x-text="c.description"></p>
+                                    <div class="flex justify-between items-center pt-3 border-t border-slate-800">
+                                        <span class="text-xs font-bold text-emerald-400" x-text="c.price"></span>
+                                        <button @click="alert('Upload Video Lesson for ' + c.title)" class="px-3 py-1.5 rounded-xl bg-sky-500/20 text-sky-400 text-xs font-bold">📹 Add Video Lesson</button>
+                                    </div>
+                                </div>
+                            </template>
                         </div>
                     </div>
-                </template>
-            </div>
-        </div>
 
-        <!-- ==================== TEST SERIES PAGE ==================== -->
-        <div x-show="activeTab === 'tests'" x-transition class="py-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between mb-8">
-                <div>
-                    <h1 class="text-3xl font-black text-slate-900 dark:text-white" x-text="lang === 'hi' ? 'ऑनलाइन टेस्ट सीरीज' : 'All-India Test Series'"></h1>
-                    <p class="text-slate-500 text-sm mt-1">NTA pattern online tests</p>
-                </div>
-                <template x-if="userRole === 'admin'">
-                    <button @click="showUploadTestModal = true" class="px-5 py-2.5 rounded-xl btn-grad text-white font-bold text-sm shadow-md flex items-center gap-2">
-                        <span>📝</span> <span>Create New Test Series</span>
-                    </button>
-                </template>
-            </div>
-
-            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                <template x-for="test in testsList" :key="test.title">
-                    <div class="bg-white dark:bg-navy-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm hover:shadow-xl transition-all space-y-4">
-                        <div class="flex justify-between">
-                            <span class="px-3 py-1 rounded-full text-[11px] font-black uppercase bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-300" x-text="test.type"></span>
-                            <span class="text-xs font-bold text-emerald-500">FREE</span>
+                    <!-- TESTS SUB-TAB -->
+                    <div x-show="adminSubTab === 'tests'" class="space-y-6">
+                        <div class="flex items-center justify-between">
+                            <h2 class="text-xl font-black text-white">📝 Test Series Manager</h2>
+                            <button @click="showUploadTestModal = true" class="px-5 py-2.5 rounded-xl bg-purple-600 text-white font-bold text-xs">+ Create Test</button>
                         </div>
-                        <h3 class="font-bold text-base text-slate-900 dark:text-white" x-text="test.title"></h3>
-                        <div class="flex gap-3 text-xs text-slate-400">
-                            <span x-text="'❓ ' + test.questions + ' Qs'"></span>
-                            <span x-text="'⏱ ' + test.time + ' mins'"></span>
+
+                        <div class="grid sm:grid-cols-2 gap-4">
+                            <template x-for="t in testsList" :key="t.title">
+                                <div class="bg-white dark:bg-navy-900 rounded-3xl p-5 border border-slate-200 dark:border-slate-800 space-y-3">
+                                    <span class="px-3 py-1 rounded-full bg-purple-500/20 text-purple-300 text-xs font-bold" x-text="t.type"></span>
+                                    <h4 class="font-bold text-base text-white" x-text="t.title"></h4>
+                                    <div class="flex justify-between items-center pt-3 border-t border-slate-800 text-xs text-slate-400">
+                                        <span x-text="t.questions + ' Qs · ' + t.time + ' mins'"></span>
+                                        <button @click="alert('Import CSV Questions for ' + t.title)" class="px-3 py-1.5 rounded-xl bg-purple-500/20 text-purple-300 font-bold">📥 Import CSV</button>
+                                    </div>
+                                </div>
+                            </template>
                         </div>
-                        <button @click="alert('Starting ' + test.title)" class="w-full py-2.5 rounded-xl btn-grad text-white font-bold text-xs">Attempt Test →</button>
                     </div>
-                </template>
-            </div>
-        </div>
 
-        <!-- ==================== ADMIN PANEL DASHBOARD PAGE ==================== -->
-        <div x-show="activeTab === 'admin'" x-transition class="py-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-            <!-- Header -->
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-gradient-to-r from-red-500/10 via-slate-900 to-navy-900 p-6 rounded-3xl border border-red-500/20">
-                <div>
-                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-500/20 text-red-400 text-xs font-bold">
-                        🔴 ADMIN CONTROL CENTER
+                    <!-- STUDENTS SUB-TAB -->
+                    <div x-show="adminSubTab === 'students'" class="bg-white dark:bg-navy-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 space-y-4">
+                        <h2 class="text-xl font-black text-white">👨‍🎓 Student Management</h2>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-xs">
+                                <thead class="bg-slate-800/60 text-slate-400 uppercase">
+                                    <tr><th class="p-3">Student Name</th><th class="p-3">Email</th><th class="p-3">Target Exam</th><th class="p-3">Status</th></tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-800">
+                                    <tr class="hover:bg-slate-800/40"><td class="p-3 font-bold text-white">Rahul Verma</td><td class="p-3 text-slate-400">rahul@example.com</td><td class="p-3 text-sky-400">UGC NET</td><td class="p-3"><span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-bold">Active</span></td></tr>
+                                    <tr class="hover:bg-slate-800/40"><td class="p-3 font-bold text-white">Priya Srivastava</td><td class="p-3 text-slate-400">priya@example.com</td><td class="p-3 text-sky-400">SSC CGL</td><td class="p-3"><span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-bold">Active</span></td></tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                    <h1 class="text-3xl font-black text-white mt-2">Welcome, Administrator 👋</h1>
-                    <p class="text-slate-400 text-xs mt-1">Manage lectures, test series, students, and platform settings</p>
+
+                    <!-- LIVE CLASSES SUB-TAB -->
+                    <div x-show="adminSubTab === 'live'" class="bg-white dark:bg-navy-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 space-y-4">
+                        <div class="flex justify-between items-center">
+                            <h2 class="text-xl font-black text-white">🔴 Live Class Scheduler</h2>
+                            <button @click="showLiveClassModal = true" class="px-4 py-2 rounded-xl bg-emerald-600 text-white font-bold text-xs">+ Schedule Live Class</button>
+                        </div>
+                        <div class="p-4 bg-slate-800 rounded-2xl flex justify-between items-center">
+                            <div>
+                                <h4 class="font-bold text-sm text-white">BA History Special Live Session</h4>
+                                <p class="text-xs text-slate-400 mt-0.5">Today at 7:00 PM · Instructor: Dr. R. K. Sharma</p>
+                            </div>
+                            <span class="px-3 py-1 rounded-full bg-red-500/20 text-red-400 font-bold text-xs">🔴 Scheduled</span>
+                        </div>
+                    </div>
+
                 </div>
-                <div class="flex gap-3">
-                    <button @click="showUploadCourseModal = true" class="px-5 py-3 rounded-xl btn-grad text-white font-bold text-xs shadow-lg flex items-center gap-2">
-                        <span>📹</span> <span>Upload Lecture</span>
-                    </button>
-                    <button @click="showUploadTestModal = true" class="px-5 py-3 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs shadow-lg flex items-center gap-2">
-                        <span>📝</span> <span>Add Test Series</span>
-                    </button>
-                </div>
+
             </div>
 
-            <!-- Admin Stats Grid -->
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                <div class="bg-white dark:bg-navy-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800">
-                    <p class="text-xs text-slate-400 font-bold">Total Students</p>
-                    <p class="text-3xl font-black text-sky-400 mt-1">5,000,000+</p>
-                </div>
-                <div class="bg-white dark:bg-navy-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800">
-                    <p class="text-xs text-slate-400 font-bold">Uploaded Courses</p>
-                    <p class="text-3xl font-black text-emerald-400 mt-1" x-text="courses.length"></p>
-                </div>
-                <div class="bg-white dark:bg-navy-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800">
-                    <p class="text-xs text-slate-400 font-bold">Active Tests</p>
-                    <p class="text-3xl font-black text-purple-400 mt-1" x-text="testsList.length"></p>
-                </div>
-                <div class="bg-white dark:bg-navy-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800">
-                    <p class="text-xs text-slate-400 font-bold">Monthly Revenue</p>
-                    <p class="text-3xl font-black text-amber-400 mt-1">₹4,85,000</p>
-                </div>
-            </div>
-
-            <!-- Server Backend Direct Links -->
-            <div class="p-6 bg-slate-900 rounded-3xl border border-slate-800 text-center space-y-3">
-                <h3 class="font-bold text-white text-base">🌐 Production Backend Links</h3>
-                <p class="text-xs text-slate-400">You can also access the full Laravel PHP Admin Console on Railway or Render:</p>
-                <div class="flex justify-center gap-4">
-                    <a href="https://lo-samajh-lo-production.up.railway.app/admin/dashboard" target="_blank" class="px-5 py-2.5 rounded-xl btn-grad text-white text-xs font-bold">Open Railway Admin Console 🚀</a>
-                    <a href="https://lo-samajh-lo.onrender.com/admin/dashboard" target="_blank" class="px-5 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs font-bold">Open Render Admin Console 🌐</a>
-                </div>
-            </div>
-        </div>
-
-        <!-- ==================== AI TUTOR PAGE ==================== -->
-        <div x-show="activeTab === 'aitutor'" x-transition class="py-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-8">
-                <span class="text-5xl block mb-3">🤖</span>
-                <h1 class="text-3xl font-black text-slate-900 dark:text-white">Samajh AI Tutor</h1>
-                <p class="text-slate-500 text-sm mt-1">Ask doubts in Hindi or English 24/7</p>
-            </div>
-            <div class="bg-white dark:bg-navy-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 space-y-4">
-                <p class="text-sm text-slate-300">Namaste! 🙏 I am Samajh AI Tutor. Ask me any doubt!</p>
-            </div>
-        </div>
-
-        <!-- ==================== LEADERBOARD PAGE ==================== -->
-        <div x-show="activeTab === 'leaderboard'" x-transition class="py-12 max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-10"><h1 class="text-3xl font-black">🏆 Leaderboard</h1></div>
         </div>
 
     </main>
@@ -284,15 +348,13 @@
         <div class="bg-white dark:bg-navy-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-8 max-w-lg w-full relative shadow-2xl space-y-4">
             <button @click="showUploadCourseModal = false" class="absolute top-4 right-4 text-slate-400 hover:text-white">✕</button>
             <h3 class="text-xl font-black text-slate-900 dark:text-white">📹 Upload New Lecture / Course</h3>
-            
             <div class="space-y-3">
                 <div><label class="block text-xs font-bold text-slate-400 mb-1">Course Title</label><input type="text" x-model="newCourse.title" class="w-full px-4 py-2 rounded-xl bg-slate-800 text-white text-sm outline-none"></div>
                 <div><label class="block text-xs font-bold text-slate-400 mb-1">Category</label><input type="text" x-model="newCourse.category" class="w-full px-4 py-2 rounded-xl bg-slate-800 text-white text-sm outline-none"></div>
                 <div><label class="block text-xs font-bold text-slate-400 mb-1">Instructor / Teacher</label><input type="text" x-model="newCourse.teacher" class="w-full px-4 py-2 rounded-xl bg-slate-800 text-white text-sm outline-none"></div>
                 <div><label class="block text-xs font-bold text-slate-400 mb-1">Price (₹)</label><input type="text" x-model="newCourse.price" class="w-full px-4 py-2 rounded-xl bg-slate-800 text-white text-sm outline-none"></div>
-                <div><label class="block text-xs font-bold text-slate-400 mb-1">Lecture Description</label><textarea x-model="newCourse.description" rows="3" class="w-full px-4 py-2 rounded-xl bg-slate-800 text-white text-sm outline-none"></textarea></div>
+                <div><label class="block text-xs font-bold text-slate-400 mb-1">Description</label><textarea x-model="newCourse.description" rows="3" class="w-full px-4 py-2 rounded-xl bg-slate-800 text-white text-sm outline-none"></textarea></div>
             </div>
-
             <button @click="saveCourse()" class="w-full py-3 rounded-xl btn-grad font-bold text-white text-sm">Upload & Publish Course 🚀</button>
         </div>
     </div>
@@ -302,7 +364,6 @@
         <div class="bg-white dark:bg-navy-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-8 max-w-lg w-full relative shadow-2xl space-y-4">
             <button @click="showUploadTestModal = false" class="absolute top-4 right-4 text-slate-400 hover:text-white">✕</button>
             <h3 class="text-xl font-black text-slate-900 dark:text-white">📝 Create New Test Series</h3>
-
             <div class="space-y-3">
                 <div><label class="block text-xs font-bold text-slate-400 mb-1">Test Title</label><input type="text" x-model="newTest.title" class="w-full px-4 py-2 rounded-xl bg-slate-800 text-white text-sm outline-none"></div>
                 <div><label class="block text-xs font-bold text-slate-400 mb-1">Type (Full Mock / PYQ / Topic Test)</label><input type="text" x-model="newTest.type" class="w-full px-4 py-2 rounded-xl bg-slate-800 text-white text-sm outline-none"></div>
@@ -311,62 +372,38 @@
                     <div><label class="block text-xs font-bold text-slate-400 mb-1">Duration (Mins)</label><input type="number" x-model="newTest.time" class="w-full px-4 py-2 rounded-xl bg-slate-800 text-white text-sm outline-none"></div>
                 </div>
             </div>
-
-            <button @click="saveTest()" class="w-full py-3 rounded-xl btn-grad font-bold text-white text-sm">Save & Publish Test Series 📝</button>
+            <button @click="saveTest()" class="w-full py-3 rounded-xl bg-purple-600 text-white font-bold text-sm">Save & Publish Test Series 📝</button>
         </div>
     </div>
 
-    <!-- 🔐 AUTH MODAL -->
-    <div x-show="showAuthModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
-        <div class="bg-white dark:bg-navy-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-8 max-w-md w-full relative shadow-2xl space-y-4">
-            <button @click="showAuthModal = false" class="absolute top-4 right-4 text-slate-400 hover:text-white">✕</button>
-
-            <div class="text-center">
-                <h3 class="text-2xl font-black text-slate-900 dark:text-white" x-text="authMode === 'login' ? 'Welcome Back!' : 'Create Account'"></h3>
-                <p class="text-xs text-slate-400 mt-1">Enter credentials or click demo account</p>
+    <!-- 🔴 LIVE CLASS SCHEDULE MODAL -->
+    <div x-show="showLiveClassModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
+        <div class="bg-white dark:bg-navy-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-8 max-w-lg w-full relative shadow-2xl space-y-4">
+            <button @click="showLiveClassModal = false" class="absolute top-4 right-4 text-slate-400 hover:text-white">✕</button>
+            <h3 class="text-xl font-black text-slate-900 dark:text-white">🔴 Schedule New Live Class</h3>
+            <div class="space-y-3">
+                <div><label class="block text-xs font-bold text-slate-400 mb-1">Live Class Title</label><input type="text" placeholder="BA History Special Live Session" class="w-full px-4 py-2 rounded-xl bg-slate-800 text-white text-sm outline-none"></div>
+                <div><label class="block text-xs font-bold text-slate-400 mb-1">Zoom / YouTube Stream Link</label><input type="text" placeholder="https://youtube.com/live/..." class="w-full px-4 py-2 rounded-xl bg-slate-800 text-white text-sm outline-none"></div>
             </div>
-
-            <form @submit.prevent="submitAuth()" class="space-y-4">
-                <div><label class="block text-xs font-bold text-slate-400 mb-1">Email</label><input type="email" x-model="authEmail" required class="w-full px-4 py-2.5 rounded-xl border border-slate-700 bg-slate-800 text-white text-sm outline-none"></div>
-                <div><label class="block text-xs font-bold text-slate-400 mb-1">Password</label><input type="password" x-model="authPassword" required class="w-full px-4 py-2.5 rounded-xl border border-slate-700 bg-slate-800 text-white text-sm outline-none"></div>
-                <button type="submit" class="w-full py-3.5 rounded-xl btn-grad text-white font-bold text-sm shadow-md" x-text="authMode === 'login' ? 'Log In' : 'Sign Up'"></button>
-            </form>
-
-            <div class="pt-4 border-t border-slate-800 space-y-2">
-                <p class="text-xs font-bold text-sky-400">⚡ 1-Click Demo Login:</p>
-                <div class="grid grid-cols-2 gap-2 text-xs">
-                    <button @click="loginAs('admin@test.com', 'admin', 'Super Admin')" class="p-2.5 rounded-xl bg-red-500/20 text-red-300 font-bold border border-red-500/30">🔴 Admin Panel</button>
-                    <button @click="loginAs('student@test.com', 'student', 'Test Student')" class="p-2.5 rounded-xl bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/30">🟢 Student Panel</button>
-                </div>
-            </div>
+            <button @click="alert('Live Class Scheduled!'); showLiveClassModal = false;" class="w-full py-3 rounded-xl bg-emerald-600 text-white font-bold text-sm">Schedule Live Session 🔴</button>
         </div>
     </div>
 
     <!-- 🔻 FOOTER -->
-    <footer class="bg-white dark:bg-navy-900 border-t border-slate-200 dark:border-slate-800 py-10">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-4">
-            <div class="flex items-center justify-center gap-3">
-                <div class="w-8 h-8 rounded-lg btn-grad flex items-center justify-center font-black text-white text-xs">LS</div>
-                <span class="font-black text-lg text-slate-900 dark:text-white">Lo Samajh Lo</span>
-            </div>
-            <p class="text-xs text-slate-500">© 2026 Lo Samajh Lo. All rights reserved.</p>
-        </div>
+    <footer class="bg-white dark:bg-navy-900 border-t border-slate-200 dark:border-slate-800 py-8 text-center text-xs text-slate-500">
+        © 2026 Lo Samajh Lo (Yuva Setu Edition). All rights reserved.
     </footer>
 
     <!-- Alpine App Logic -->
     <script>
         function appData() {
             return {
-                lang: 'en',
                 darkMode: true,
-                activeTab: 'home',
-                isLoggedIn: false,
-                userRole: 'guest',
-                userName: '',
-                showAuthModal: false,
-                authMode: 'login',
-                authEmail: 'admin@test.com',
-                authPassword: 'password',
+                activeTab: 'admin',
+                adminSubTab: 'overview',
+                isLoggedIn: true,
+                userRole: 'admin',
+                userName: 'Super Admin',
 
                 showUploadCourseModal: false,
                 newCourse: { title: '', category: 'Graduation', teacher: 'Dr. R. K. Sharma', price: '₹1,499', description: '' },
@@ -374,7 +411,8 @@
                 showUploadTestModal: false,
                 newTest: { title: '', type: 'Full Mock', questions: 50, time: 60 },
 
-                toggleLang() { this.lang = this.lang === 'en' ? 'hi' : 'en'; },
+                showLiveClassModal: false,
+
                 toggleDarkMode() {
                     this.darkMode = !this.darkMode;
                     if (this.darkMode) document.documentElement.classList.add('dark');
@@ -395,22 +433,10 @@
                 ],
 
                 loginAs(email, role, name) {
-                    this.authEmail = email;
                     this.userRole = role;
                     this.userName = name;
                     this.isLoggedIn = true;
-                    this.showAuthModal = false;
-                    if (role === 'admin') {
-                        this.activeTab = 'admin';
-                    }
-                },
-
-                submitAuth() {
-                    if (this.authEmail.includes('admin')) {
-                        this.loginAs(this.authEmail, 'admin', 'Super Admin');
-                    } else {
-                        this.loginAs(this.authEmail, 'student', 'Student');
-                    }
+                    this.activeTab = 'admin';
                 },
 
                 logout() {
