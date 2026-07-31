@@ -1,9 +1,6 @@
 [build]
-  command = "npm install --include=dev && npm run build"
+  command = ""
   publish = "public"
-
-[build.environment]
-  NODE_VERSION = "20"
 
 [[redirects]]
   from = "/*"
