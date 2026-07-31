@@ -28,7 +28,7 @@
         }
     </script>
     
-    <!-- Alpine.js for lightweight reactivity -->
+    <!-- Alpine.js -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
     <style>
@@ -36,8 +36,6 @@
         .grad-text { background: linear-gradient(135deg, #38BDF8 0%, #2563EB 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .btn-grad { background: linear-gradient(135deg, #38BDF8 0%, #2563EB 100%); }
         .btn-grad:hover { background: linear-gradient(135deg, #0EA5E9 0%, #1D4ED8 100%); }
-        .glass { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.1); }
-        .glass-light { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(16px); border: 1px solid rgba(0, 0, 0, 0.05); }
     </style>
 </head>
 <body x-data="appData()" class="bg-slate-50 dark:bg-navy-950 text-slate-900 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-300">
@@ -63,6 +61,13 @@
                     <span>🤖</span> <span x-text="lang === 'hi' ? 'AI ट्यूटर' : 'AI Tutor'"></span>
                 </button>
                 <button @click="activeTab = 'leaderboard'" :class="activeTab === 'leaderboard' ? 'text-sky-500 font-bold bg-sky-50 dark:bg-sky-500/10' : 'text-slate-600 dark:text-slate-300 hover:text-sky-500'" class="px-3.5 py-2 rounded-xl text-sm transition-all" x-text="lang === 'hi' ? 'लीडरबोर्ड' : 'Leaderboard'"></button>
+                
+                <!-- Admin Panel Tab (If logged in as Admin) -->
+                <template x-if="isLoggedIn && userRole === 'admin'">
+                    <button @click="activeTab = 'admin'" :class="activeTab === 'admin' ? 'text-red-500 font-bold bg-red-50 dark:bg-red-500/10' : 'text-red-400 font-bold hover:text-red-500'" class="px-3.5 py-2 rounded-xl text-sm transition-all flex items-center gap-1">
+                        <span>⚙️</span> <span>Admin Panel</span>
+                    </button>
+                </template>
             </nav>
 
             <!-- Action Controls -->
@@ -78,9 +83,20 @@
                     <span x-show="darkMode">☀️</span>
                 </button>
 
-                <!-- Login / Register Buttons -->
-                <button @click="showAuthModal = true; authMode = 'login'" class="hidden sm:block px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-700 font-bold text-sm text-slate-800 dark:text-slate-200 hover:border-sky-400 transition" x-text="lang === 'hi' ? 'लॉगिन' : 'Log In'"></button>
-                <button @click="showAuthModal = true; authMode = 'register'" class="px-4 py-2 rounded-xl btn-grad font-bold text-sm text-white shadow-md shadow-sky-500/20" x-text="lang === 'hi' ? 'रजिस्टर करें' : 'Sign Up'"></button>
+                <!-- Login / Admin Dashboard Toggle -->
+                <template x-if="!isLoggedIn">
+                    <div class="flex items-center gap-2">
+                        <button @click="showAuthModal = true; authMode = 'login'" class="px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-700 font-bold text-sm text-slate-800 dark:text-slate-200 hover:border-sky-400 transition" x-text="lang === 'hi' ? 'लॉगिन' : 'Log In'"></button>
+                        <button @click="showAuthModal = true; authMode = 'register'" class="px-4 py-2 rounded-xl btn-grad font-bold text-sm text-white shadow-md shadow-sky-500/20" x-text="lang === 'hi' ? 'रजिस्टर' : 'Sign Up'"></button>
+                    </div>
+                </template>
+
+                <template x-if="isLoggedIn">
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs font-bold text-sky-400" x-text="userName"></span>
+                        <button @click="logout()" class="px-3 py-1.5 rounded-xl bg-red-500/20 text-red-400 border border-red-500/30 text-xs font-bold hover:bg-red-500/30 transition">Logout</button>
+                    </div>
+                </template>
             </div>
         </div>
     </header>
@@ -89,20 +105,14 @@
     <main class="flex-1">
 
         <!-- ==================== HOME PAGE ==================== -->
-        <div x-show="activeTab === 'home'" x-transition:enter="transition ease-out duration-300 opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100">
+        <div x-show="activeTab === 'home'" x-transition>
             <!-- Hero Section -->
             <section class="relative overflow-hidden pt-12 pb-20 lg:pt-20 lg:pb-28 bg-gradient-to-b from-sky-500/5 via-transparent to-transparent">
-                <!-- Background Orbs -->
-                <div class="absolute top-10 left-10 w-96 h-96 bg-sky-500/15 rounded-full blur-3xl pointer-events-none"></div>
-                <div class="absolute bottom-10 right-10 w-96 h-96 bg-blue-600/15 rounded-full blur-3xl pointer-events-none"></div>
-
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center space-y-8">
-                    <!-- Badge -->
                     <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-sky-500/10 border border-sky-500/20 text-sky-600 dark:text-sky-400 text-xs font-bold uppercase tracking-wider">
                         <span>🔥</span> <span x-text="lang === 'hi' ? 'ग्रेजुएशन, पीजी और कंपैटिटिव एग्जाम्स की सर्वश्रेष्ठ तैयारी' : 'Best Prep for Graduation, PG & Competitive Exams'"></span>
                     </div>
 
-                    <!-- Main Headline -->
                     <h1 class="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight leading-none text-slate-900 dark:text-white">
                         <span x-text="lang === 'hi' ? 'स्मार्ट पढ़ें, ऊंचा स्कोर करें' : 'Learn Smarter, Score Higher'"></span><br>
                         <span class="grad-text">Lo Samajh Lo</span>
@@ -112,66 +122,21 @@
                        x-text="lang === 'hi' ? 'BA, BSc, BCom, MA, MSc, UGC NET, SSC, Banking और UPSC की तैयारी करें भारत के बेस्ट टीचर्स और Samajh AI Tutor के साथ।' : 'Master BA, BSc, BCom, MA, MSc, UGC NET, SSC, Banking & UPSC with top educators and AI-powered interactive learning.'">
                     </p>
 
-                    <!-- Interactive Search Bar -->
-                    <div class="max-w-2xl mx-auto relative">
-                        <div class="flex items-center bg-white dark:bg-navy-900 rounded-2xl p-2 shadow-xl border border-slate-200 dark:border-slate-800">
-                            <span class="text-xl pl-4 pr-2">🔍</span>
-                            <input type="text" x-model="searchQuery" @input="filterCourses()"
-                                   :placeholder="lang === 'hi' ? 'कोर्स, सब्जेक्ट या टेस्ट सीरीज खोजें...' : 'Search for courses, subjects, or tests...'"
-                                   class="w-full bg-transparent outline-none text-slate-800 dark:text-white text-sm sm:text-base font-medium placeholder-slate-400">
-                            <button @click="activeTab = 'courses'" class="px-6 py-3 rounded-xl btn-grad text-white font-bold text-sm shadow-md" x-text="lang === 'hi' ? 'खोजें' : 'Search'"></button>
-                        </div>
-                    </div>
-
                     <!-- CTAs -->
                     <div class="flex flex-wrap justify-center gap-4 pt-2">
                         <button @click="activeTab = 'courses'" class="px-8 py-4 rounded-2xl btn-grad font-bold text-white shadow-xl shadow-sky-500/25 hover:scale-105 transition-all" x-text="lang === 'hi' ? 'कोर्स देखें →' : 'Explore Courses →'"></button>
-                        <button @click="activeTab = 'aitutor'" class="px-8 py-4 rounded-2xl bg-white dark:bg-navy-900 border border-slate-300 dark:border-slate-700 font-bold text-slate-800 dark:text-slate-200 hover:border-sky-400 shadow-sm hover:scale-105 transition-all flex items-center gap-2">
-                            <span>🤖</span> <span x-text="lang === 'hi' ? 'AI ट्यूटर से पूछें' : 'Ask AI Tutor'"></span>
+                        <button @click="showAuthModal = true; authMode = 'login'" class="px-8 py-4 rounded-2xl bg-red-600 hover:bg-red-700 text-white font-bold shadow-xl flex items-center gap-2 hover:scale-105 transition-all">
+                            <span>⚙️</span> <span>Admin Panel Login</span>
                         </button>
                     </div>
 
                     <!-- Trust Stats Counter -->
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto pt-10 border-t border-slate-200 dark:border-slate-800">
-                        <div>
-                            <p class="text-3xl font-black text-sky-500">5M+</p>
-                            <p class="text-xs text-slate-500 dark:text-slate-400 font-semibold mt-1" x-text="lang === 'hi' ? 'सक्रिय छात्र' : 'Active Students'"></p>
-                        </div>
-                        <div>
-                            <p class="text-3xl font-black text-blue-500">50,000+</p>
-                            <p class="text-xs text-slate-500 dark:text-slate-400 font-semibold mt-1" x-text="lang === 'hi' ? 'प्रैक्टिस प्रश्न' : 'Practice Questions'"></p>
-                        </div>
-                        <div>
-                            <p class="text-3xl font-black text-emerald-500">500+</p>
-                            <p class="text-xs text-slate-500 dark:text-slate-400 font-semibold mt-1" x-text="lang === 'hi' ? 'विशेषज्ञ शिक्षक' : 'Expert Teachers'"></p>
-                        </div>
-                        <div>
-                            <p class="text-3xl font-black text-purple-500">98%</p>
-                            <p class="text-xs text-slate-500 dark:text-slate-400 font-semibold mt-1" x-text="lang === 'hi' ? 'सफलता दर' : 'Success Rate'"></p>
-                        </div>
+                        <div><p class="text-3xl font-black text-sky-500">5M+</p><p class="text-xs text-slate-500 dark:text-slate-400 font-semibold mt-1">Students</p></div>
+                        <div><p class="text-3xl font-black text-blue-500">50,000+</p><p class="text-xs text-slate-500 dark:text-slate-400 font-semibold mt-1">Practice Qs</p></div>
+                        <div><p class="text-3xl font-black text-emerald-500">500+</p><p class="text-xs text-slate-500 dark:text-slate-400 font-semibold mt-1">Teachers</p></div>
+                        <div><p class="text-3xl font-black text-purple-500">98%</p><p class="text-xs text-slate-500 dark:text-slate-400 font-semibold mt-1">Success Rate</p></div>
                     </div>
-                </div>
-            </section>
-
-            <!-- Exam Categories -->
-            <section class="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex items-center justify-between mb-8">
-                    <div>
-                        <h2 class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white" x-text="lang === 'hi' ? 'एग्जाम श्रेणियां' : 'Exam Categories'"></h2>
-                        <p class="text-slate-500 text-sm mt-1" x-text="lang === 'hi' ? 'अपने लक्ष्य के अनुसार पढ़ाई शुरू करें' : 'Select your exam target to begin'"></p>
-                    </div>
-                    <button @click="activeTab = 'courses'" class="text-sky-500 font-bold text-sm hover:underline" x-text="lang === 'hi' ? 'सभी देखें →' : 'View All →'"></button>
-                </div>
-
-                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-                    <template x-for="cat in categories" :key="cat.name">
-                        <div @click="activeTab = 'courses'; selectedCategory = cat.slug"
-                             class="bg-white dark:bg-navy-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 text-center shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all cursor-pointer group">
-                            <span class="text-4xl block mb-3 group-hover:scale-110 transition-transform" x-text="cat.icon"></span>
-                            <h3 class="font-bold text-sm text-slate-900 dark:text-white" x-text="lang === 'hi' ? cat.name_hi : cat.name"></h3>
-                            <p class="text-[11px] text-slate-500 mt-1" x-text="cat.count + ' Courses'"></p>
-                        </div>
-                    </template>
                 </div>
             </section>
         </div>
@@ -183,42 +148,28 @@
                     <h1 class="text-3xl font-black text-slate-900 dark:text-white" x-text="lang === 'hi' ? 'लोकप्रिय कोर्स' : 'Explore Courses'"></h1>
                     <p class="text-slate-500 text-sm mt-1" x-text="lang === 'hi' ? 'भारत के सर्वश्रेष्ठ शिक्षकों से सीखें' : 'Learn from top educators across India'"></p>
                 </div>
-
-                <!-- Filter Tabs -->
-                <div class="flex flex-wrap gap-2">
-                    <button @click="selectedCategory = 'all'" :class="selectedCategory === 'all' ? 'btn-grad text-white' : 'bg-white dark:bg-navy-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800'" class="px-4 py-2 rounded-xl text-xs font-bold transition-all">All</button>
-                    <button @click="selectedCategory = 'graduation'" :class="selectedCategory === 'graduation' ? 'btn-grad text-white' : 'bg-white dark:bg-navy-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800'" class="px-4 py-2 rounded-xl text-xs font-bold transition-all">Graduation</button>
-                    <button @click="selectedCategory = 'pg'" :class="selectedCategory === 'pg' ? 'btn-grad text-white' : 'bg-white dark:bg-navy-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800'" class="px-4 py-2 rounded-xl text-xs font-bold transition-all">Post Graduation</button>
-                    <button @click="selectedCategory = 'competitive'" :class="selectedCategory === 'competitive' ? 'btn-grad text-white' : 'bg-white dark:bg-navy-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800'" class="px-4 py-2 rounded-xl text-xs font-bold transition-all">Competitive</button>
-                </div>
+                <template x-if="userRole === 'admin'">
+                    <button @click="showUploadCourseModal = true" class="px-5 py-2.5 rounded-xl btn-grad text-white font-bold text-sm shadow-md flex items-center gap-2">
+                        <span>➕</span> <span>Upload New Lecture / Course</span>
+                    </button>
+                </template>
             </div>
 
             <!-- Course Grid -->
             <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                <template x-for="course in filteredCourses" :key="course.title">
-                    <div class="bg-white dark:bg-navy-900 rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm hover:shadow-2xl hover:-translate-y-1 transition-all flex flex-col">
-                        <!-- Thumbnail Header -->
-                        <div class="h-48 bg-gradient-to-br from-slate-800 to-slate-950 relative p-5 flex flex-col justify-between">
-                            <span class="self-start px-3 py-1 rounded-full bg-sky-500/20 text-sky-300 text-xs font-bold border border-sky-500/30" x-text="course.category"></span>
-                            <div>
-                                <span class="text-xs text-slate-400" x-text="course.lessons + ' Lessons · ' + course.duration"></span>
-                            </div>
+                <template x-for="course in courses" :key="course.title">
+                    <div class="bg-white dark:bg-navy-900 rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm hover:shadow-2xl transition-all flex flex-col justify-between p-6">
+                        <div>
+                            <span class="px-3 py-1 rounded-full bg-sky-500/20 text-sky-400 text-xs font-bold border border-sky-500/30" x-text="course.category"></span>
+                            <h3 class="font-bold text-lg text-slate-900 dark:text-white mt-4" x-text="course.title"></h3>
+                            <p class="text-xs text-slate-400 mt-2" x-text="course.description"></p>
                         </div>
-
-                        <!-- Body -->
-                        <div class="p-6 flex-1 flex flex-col justify-between space-y-4">
+                        <div class="flex items-center justify-between pt-4 border-t border-slate-200 dark:border-slate-800 mt-4">
                             <div>
-                                <h3 class="font-bold text-lg text-slate-900 dark:text-white leading-snug" x-text="course.title"></h3>
-                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 line-clamp-2" x-text="course.description"></p>
+                                <span class="text-xs text-slate-400 block" x-text="'👨‍🏫 ' + course.teacher"></span>
+                                <span class="text-sm font-black text-sky-500" x-text="course.price"></span>
                             </div>
-
-                            <div class="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-slate-800">
-                                <div>
-                                    <span class="text-xs text-slate-400 block" x-text="'👨‍🏫 ' + course.teacher"></span>
-                                    <span class="text-sm font-black text-sky-500" x-text="course.price"></span>
-                                </div>
-                                <button @click="enrollCourse(course)" class="px-5 py-2.5 rounded-xl btn-grad text-white font-bold text-xs shadow-md" x-text="lang === 'hi' ? 'नामांकन करें' : 'Enroll Now'"></button>
-                            </div>
+                            <button @click="alert('Enrolled in ' + course.title)" class="px-4 py-2 rounded-xl btn-grad text-white font-bold text-xs">Enroll Now</button>
                         </div>
                     </div>
                 </template>
@@ -227,32 +178,85 @@
 
         <!-- ==================== TEST SERIES PAGE ==================== -->
         <div x-show="activeTab === 'tests'" x-transition class="py-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center max-w-3xl mx-auto mb-12">
-                <span class="text-5xl block mb-3">📝</span>
-                <h1 class="text-3xl font-black text-slate-900 dark:text-white" x-text="lang === 'hi' ? 'ऑनलाइन टेस्ट सीरीज' : 'All-India Test Series'"></h1>
-                <p class="text-slate-500 text-sm mt-1" x-text="lang === 'hi' ? 'NTA पैटर्न पर आधारित 50,000+ प्रश्न और रियल टाइम रैंक' : 'NTA pattern online tests with instant AI performance report and leaderboard'"></p>
+            <div class="flex items-center justify-between mb-8">
+                <div>
+                    <h1 class="text-3xl font-black text-slate-900 dark:text-white" x-text="lang === 'hi' ? 'ऑनलाइन टेस्ट सीरीज' : 'All-India Test Series'"></h1>
+                    <p class="text-slate-500 text-sm mt-1">NTA pattern online tests</p>
+                </div>
+                <template x-if="userRole === 'admin'">
+                    <button @click="showUploadTestModal = true" class="px-5 py-2.5 rounded-xl btn-grad text-white font-bold text-sm shadow-md flex items-center gap-2">
+                        <span>📝</span> <span>Create New Test Series</span>
+                    </button>
+                </template>
             </div>
 
-            <!-- Tests Grid -->
             <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 <template x-for="test in testsList" :key="test.title">
-                    <div class="bg-white dark:bg-navy-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm hover:shadow-xl transition-all space-y-4 flex flex-col justify-between">
-                        <div>
-                            <div class="flex items-center justify-between mb-3">
-                                <span class="px-3 py-1 rounded-full text-[11px] font-black uppercase bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-300" x-text="test.type"></span>
-                                <span class="text-xs font-bold text-emerald-500">FREE</span>
-                            </div>
-                            <h3 class="font-bold text-base text-slate-900 dark:text-white" x-text="test.title"></h3>
-                            <div class="flex flex-wrap gap-3 text-xs text-slate-500 dark:text-slate-400 mt-3">
-                                <span x-text="'❓ ' + test.questions + ' Qs'"></span>
-                                <span x-text="'📊 ' + test.marks + ' Marks'"></span>
-                                <span x-text="'⏱ ' + test.time + ' mins'"></span>
-                            </div>
+                    <div class="bg-white dark:bg-navy-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm hover:shadow-xl transition-all space-y-4">
+                        <div class="flex justify-between">
+                            <span class="px-3 py-1 rounded-full text-[11px] font-black uppercase bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-300" x-text="test.type"></span>
+                            <span class="text-xs font-bold text-emerald-500">FREE</span>
                         </div>
-
-                        <button @click="startTest(test)" class="w-full py-3 rounded-xl btn-grad text-white font-bold text-xs shadow-md" x-text="lang === 'hi' ? 'टेस्ट शुरू करें →' : 'Attempt Test →'"></button>
+                        <h3 class="font-bold text-base text-slate-900 dark:text-white" x-text="test.title"></h3>
+                        <div class="flex gap-3 text-xs text-slate-400">
+                            <span x-text="'❓ ' + test.questions + ' Qs'"></span>
+                            <span x-text="'⏱ ' + test.time + ' mins'"></span>
+                        </div>
+                        <button @click="alert('Starting ' + test.title)" class="w-full py-2.5 rounded-xl btn-grad text-white font-bold text-xs">Attempt Test →</button>
                     </div>
                 </template>
+            </div>
+        </div>
+
+        <!-- ==================== ADMIN PANEL DASHBOARD PAGE ==================== -->
+        <div x-show="activeTab === 'admin'" x-transition class="py-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+            <!-- Header -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-gradient-to-r from-red-500/10 via-slate-900 to-navy-900 p-6 rounded-3xl border border-red-500/20">
+                <div>
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-500/20 text-red-400 text-xs font-bold">
+                        🔴 ADMIN CONTROL CENTER
+                    </div>
+                    <h1 class="text-3xl font-black text-white mt-2">Welcome, Administrator 👋</h1>
+                    <p class="text-slate-400 text-xs mt-1">Manage lectures, test series, students, and platform settings</p>
+                </div>
+                <div class="flex gap-3">
+                    <button @click="showUploadCourseModal = true" class="px-5 py-3 rounded-xl btn-grad text-white font-bold text-xs shadow-lg flex items-center gap-2">
+                        <span>📹</span> <span>Upload Lecture</span>
+                    </button>
+                    <button @click="showUploadTestModal = true" class="px-5 py-3 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs shadow-lg flex items-center gap-2">
+                        <span>📝</span> <span>Add Test Series</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Admin Stats Grid -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                <div class="bg-white dark:bg-navy-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800">
+                    <p class="text-xs text-slate-400 font-bold">Total Students</p>
+                    <p class="text-3xl font-black text-sky-400 mt-1">5,000,000+</p>
+                </div>
+                <div class="bg-white dark:bg-navy-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800">
+                    <p class="text-xs text-slate-400 font-bold">Uploaded Courses</p>
+                    <p class="text-3xl font-black text-emerald-400 mt-1" x-text="courses.length"></p>
+                </div>
+                <div class="bg-white dark:bg-navy-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800">
+                    <p class="text-xs text-slate-400 font-bold">Active Tests</p>
+                    <p class="text-3xl font-black text-purple-400 mt-1" x-text="testsList.length"></p>
+                </div>
+                <div class="bg-white dark:bg-navy-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800">
+                    <p class="text-xs text-slate-400 font-bold">Monthly Revenue</p>
+                    <p class="text-3xl font-black text-amber-400 mt-1">₹4,85,000</p>
+                </div>
+            </div>
+
+            <!-- Server Backend Direct Links -->
+            <div class="p-6 bg-slate-900 rounded-3xl border border-slate-800 text-center space-y-3">
+                <h3 class="font-bold text-white text-base">🌐 Production Backend Links</h3>
+                <p class="text-xs text-slate-400">You can also access the full Laravel PHP Admin Console on Railway or Render:</p>
+                <div class="flex justify-center gap-4">
+                    <a href="https://lo-samajh-lo-production.up.railway.app/admin/dashboard" target="_blank" class="px-5 py-2.5 rounded-xl btn-grad text-white text-xs font-bold">Open Railway Admin Console 🚀</a>
+                    <a href="https://lo-samajh-lo.onrender.com/admin/dashboard" target="_blank" class="px-5 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs font-bold">Open Render Admin Console 🌐</a>
+                </div>
             </div>
         </div>
 
@@ -261,209 +265,175 @@
             <div class="text-center mb-8">
                 <span class="text-5xl block mb-3">🤖</span>
                 <h1 class="text-3xl font-black text-slate-900 dark:text-white">Samajh AI Tutor</h1>
-                <p class="text-slate-500 text-sm mt-1" x-text="lang === 'hi' ? '24/7 किसी भी विषय पर अपने डाउट पूछें (हिन्दी व English)' : 'Ask any doubt 24/7 in Hindi or English — Instant AI Explanations'"></p>
+                <p class="text-slate-500 text-sm mt-1">Ask doubts in Hindi or English 24/7</p>
             </div>
-
-            <!-- Chat Container -->
-            <div class="bg-white dark:bg-navy-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl overflow-hidden flex flex-col h-[550px]">
-                <!-- Chat Messages -->
-                <div id="chatBox" class="flex-1 overflow-y-auto p-6 space-y-4">
-                    <template x-for="msg in aiMessages" :key="msg.text">
-                        <div :class="msg.sender === 'user' ? 'justify-end' : 'justify-start'" class="flex items-start gap-3">
-                            <template x-if="msg.sender === 'ai'">
-                                <div class="w-8 h-8 rounded-xl btn-grad flex items-center justify-center text-white font-black text-xs">AI</div>
-                            </template>
-                            <div :class="msg.sender === 'user' ? 'bg-sky-500 text-white rounded-2xl rounded-tr-none' : 'bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 rounded-2xl rounded-tl-none border border-slate-200 dark:border-slate-700'"
-                                 class="px-4 py-3 text-sm max-w-md leading-relaxed whitespace-pre-wrap" x-text="msg.text">
-                            </div>
-                        </div>
-                    </template>
-                </div>
-
-                <!-- Input Box -->
-                <div class="p-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50 flex gap-3">
-                    <input type="text" x-model="userQuery" @keydown.enter="sendAiMessage()"
-                           :placeholder="lang === 'hi' ? 'अपना डाउट यहाँ टाइप करें...' : 'Type your doubt here...'"
-                           class="flex-1 px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-navy-900 text-slate-900 dark:text-white text-sm outline-none focus:ring-2 focus:ring-sky-400">
-                    <button @click="sendAiMessage()" class="px-6 py-3 rounded-xl btn-grad text-white font-bold text-sm shadow-md" x-text="lang === 'hi' ? 'पूछें' : 'Send'"></button>
-                </div>
+            <div class="bg-white dark:bg-navy-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 space-y-4">
+                <p class="text-sm text-slate-300">Namaste! 🙏 I am Samajh AI Tutor. Ask me any doubt!</p>
             </div>
         </div>
 
         <!-- ==================== LEADERBOARD PAGE ==================== -->
         <div x-show="activeTab === 'leaderboard'" x-transition class="py-12 max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-10">
-                <h1 class="text-3xl font-black text-slate-900 dark:text-white" x-text="lang === 'hi' ? '🏆 लीडरबोर्ड' : '🏆 All-India Leaderboard'"></h1>
-                <p class="text-slate-500 text-sm mt-1">Top performers updated live</p>
-            </div>
-
-            <div class="bg-white dark:bg-navy-900 rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-xl">
-                <template x-for="(entry, idx) in leaderboard" :key="entry.name">
-                    <div class="flex items-center justify-between p-4 border-b border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition">
-                        <div class="flex items-center gap-4">
-                            <span class="w-8 h-8 rounded-full flex items-center justify-center font-black text-sm"
-                                  :class="idx === 0 ? 'bg-amber-400 text-slate-900' : (idx === 1 ? 'bg-slate-300 text-slate-900' : (idx === 2 ? 'bg-amber-600 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-500'))"
-                                  x-text="idx + 1"></span>
-                            <div>
-                                <p class="font-bold text-sm text-slate-900 dark:text-white" x-text="entry.name"></p>
-                                <p class="text-xs text-slate-400" x-text="entry.exam"></p>
-                            </div>
-                        </div>
-                        <span class="font-black text-sky-500 text-sm" x-text="entry.score + ' pts'"></span>
-                    </div>
-                </template>
-            </div>
+            <div class="text-center mb-10"><h1 class="text-3xl font-black">🏆 Leaderboard</h1></div>
         </div>
 
     </main>
 
-    <!-- 🔐 AUTH MODAL -->
-    <div x-show="showAuthModal" x-transition class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
-        <div class="bg-white dark:bg-navy-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-8 max-w-md w-full relative shadow-2xl">
-            <button @click="showAuthModal = false" class="absolute top-4 right-4 text-slate-400 hover:text-white text-xl">✕</button>
+    <!-- 📹 UPLOAD COURSE MODAL -->
+    <div x-show="showUploadCourseModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
+        <div class="bg-white dark:bg-navy-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-8 max-w-lg w-full relative shadow-2xl space-y-4">
+            <button @click="showUploadCourseModal = false" class="absolute top-4 right-4 text-slate-400 hover:text-white">✕</button>
+            <h3 class="text-xl font-black text-slate-900 dark:text-white">📹 Upload New Lecture / Course</h3>
+            
+            <div class="space-y-3">
+                <div><label class="block text-xs font-bold text-slate-400 mb-1">Course Title</label><input type="text" x-model="newCourse.title" class="w-full px-4 py-2 rounded-xl bg-slate-800 text-white text-sm outline-none"></div>
+                <div><label class="block text-xs font-bold text-slate-400 mb-1">Category</label><input type="text" x-model="newCourse.category" class="w-full px-4 py-2 rounded-xl bg-slate-800 text-white text-sm outline-none"></div>
+                <div><label class="block text-xs font-bold text-slate-400 mb-1">Instructor / Teacher</label><input type="text" x-model="newCourse.teacher" class="w-full px-4 py-2 rounded-xl bg-slate-800 text-white text-sm outline-none"></div>
+                <div><label class="block text-xs font-bold text-slate-400 mb-1">Price (₹)</label><input type="text" x-model="newCourse.price" class="w-full px-4 py-2 rounded-xl bg-slate-800 text-white text-sm outline-none"></div>
+                <div><label class="block text-xs font-bold text-slate-400 mb-1">Lecture Description</label><textarea x-model="newCourse.description" rows="3" class="w-full px-4 py-2 rounded-xl bg-slate-800 text-white text-sm outline-none"></textarea></div>
+            </div>
 
-            <div class="text-center mb-6">
+            <button @click="saveCourse()" class="w-full py-3 rounded-xl btn-grad font-bold text-white text-sm">Upload & Publish Course 🚀</button>
+        </div>
+    </div>
+
+    <!-- 📝 UPLOAD TEST MODAL -->
+    <div x-show="showUploadTestModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
+        <div class="bg-white dark:bg-navy-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-8 max-w-lg w-full relative shadow-2xl space-y-4">
+            <button @click="showUploadTestModal = false" class="absolute top-4 right-4 text-slate-400 hover:text-white">✕</button>
+            <h3 class="text-xl font-black text-slate-900 dark:text-white">📝 Create New Test Series</h3>
+
+            <div class="space-y-3">
+                <div><label class="block text-xs font-bold text-slate-400 mb-1">Test Title</label><input type="text" x-model="newTest.title" class="w-full px-4 py-2 rounded-xl bg-slate-800 text-white text-sm outline-none"></div>
+                <div><label class="block text-xs font-bold text-slate-400 mb-1">Type (Full Mock / PYQ / Topic Test)</label><input type="text" x-model="newTest.type" class="w-full px-4 py-2 rounded-xl bg-slate-800 text-white text-sm outline-none"></div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div><label class="block text-xs font-bold text-slate-400 mb-1">Questions</label><input type="number" x-model="newTest.questions" class="w-full px-4 py-2 rounded-xl bg-slate-800 text-white text-sm outline-none"></div>
+                    <div><label class="block text-xs font-bold text-slate-400 mb-1">Duration (Mins)</label><input type="number" x-model="newTest.time" class="w-full px-4 py-2 rounded-xl bg-slate-800 text-white text-sm outline-none"></div>
+                </div>
+            </div>
+
+            <button @click="saveTest()" class="w-full py-3 rounded-xl btn-grad font-bold text-white text-sm">Save & Publish Test Series 📝</button>
+        </div>
+    </div>
+
+    <!-- 🔐 AUTH MODAL -->
+    <div x-show="showAuthModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
+        <div class="bg-white dark:bg-navy-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-8 max-w-md w-full relative shadow-2xl space-y-4">
+            <button @click="showAuthModal = false" class="absolute top-4 right-4 text-slate-400 hover:text-white">✕</button>
+
+            <div class="text-center">
                 <h3 class="text-2xl font-black text-slate-900 dark:text-white" x-text="authMode === 'login' ? 'Welcome Back!' : 'Create Account'"></h3>
-                <p class="text-xs text-slate-500 mt-1" x-text="authMode === 'login' ? 'Enter credentials or click demo account' : 'Start your prep today'"></p>
+                <p class="text-xs text-slate-400 mt-1">Enter credentials or click demo account</p>
             </div>
 
             <form @submit.prevent="submitAuth()" class="space-y-4">
-                <div>
-                    <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Email Address</label>
-                    <input type="email" x-model="authEmail" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm outline-none">
-                </div>
-
-                <div>
-                    <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Password</label>
-                    <input type="password" x-model="authPassword" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm outline-none">
-                </div>
-
+                <div><label class="block text-xs font-bold text-slate-400 mb-1">Email</label><input type="email" x-model="authEmail" required class="w-full px-4 py-2.5 rounded-xl border border-slate-700 bg-slate-800 text-white text-sm outline-none"></div>
+                <div><label class="block text-xs font-bold text-slate-400 mb-1">Password</label><input type="password" x-model="authPassword" required class="w-full px-4 py-2.5 rounded-xl border border-slate-700 bg-slate-800 text-white text-sm outline-none"></div>
                 <button type="submit" class="w-full py-3.5 rounded-xl btn-grad text-white font-bold text-sm shadow-md" x-text="authMode === 'login' ? 'Log In' : 'Sign Up'"></button>
             </form>
 
-            <div class="mt-4 pt-4 border-t border-slate-200 dark:border-slate-800">
-                <p class="text-xs font-bold text-sky-500 mb-2">⚡ Quick Demo Login:</p>
+            <div class="pt-4 border-t border-slate-800 space-y-2">
+                <p class="text-xs font-bold text-sky-400">⚡ 1-Click Demo Login:</p>
                 <div class="grid grid-cols-2 gap-2 text-xs">
-                    <button @click="authEmail = 'admin@test.com'; authPassword = 'password'; submitAuth()" class="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 font-bold text-slate-700 dark:text-slate-300">🔴 Admin</button>
-                    <button @click="authEmail = 'student@test.com'; authPassword = 'password'; submitAuth()" class="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 font-bold text-slate-700 dark:text-slate-300">🟢 Student</button>
+                    <button @click="loginAs('admin@test.com', 'admin', 'Super Admin')" class="p-2.5 rounded-xl bg-red-500/20 text-red-300 font-bold border border-red-500/30">🔴 Admin Panel</button>
+                    <button @click="loginAs('student@test.com', 'student', 'Test Student')" class="p-2.5 rounded-xl bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/30">🟢 Student Panel</button>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- 🔻 FOOTER -->
-    <footer class="bg-white dark:bg-navy-900 border-t border-slate-200 dark:border-slate-800 py-10 transition-colors">
+    <footer class="bg-white dark:bg-navy-900 border-t border-slate-200 dark:border-slate-800 py-10">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-4">
             <div class="flex items-center justify-center gap-3">
                 <div class="w-8 h-8 rounded-lg btn-grad flex items-center justify-center font-black text-white text-xs">LS</div>
                 <span class="font-black text-lg text-slate-900 dark:text-white">Lo Samajh Lo</span>
             </div>
-            <p class="text-xs text-slate-500 max-w-md mx-auto">India's leading online platform for graduation, post graduation & competitive exams.</p>
-            <p class="text-xs text-slate-400">© 2026 Lo Samajh Lo. All rights reserved.</p>
+            <p class="text-xs text-slate-500">© 2026 Lo Samajh Lo. All rights reserved.</p>
         </div>
     </footer>
 
-    <!-- Alpine App State Logic -->
+    <!-- Alpine App Logic -->
     <script>
         function appData() {
             return {
                 lang: 'en',
                 darkMode: true,
                 activeTab: 'home',
-                searchQuery: '',
-                selectedCategory: 'all',
+                isLoggedIn: false,
+                userRole: 'guest',
+                userName: '',
                 showAuthModal: false,
                 authMode: 'login',
                 authEmail: 'admin@test.com',
                 authPassword: 'password',
 
+                showUploadCourseModal: false,
+                newCourse: { title: '', category: 'Graduation', teacher: 'Dr. R. K. Sharma', price: '₹1,499', description: '' },
+
+                showUploadTestModal: false,
+                newTest: { title: '', type: 'Full Mock', questions: 50, time: 60 },
+
                 toggleLang() { this.lang = this.lang === 'en' ? 'hi' : 'en'; },
                 toggleDarkMode() {
                     this.darkMode = !this.darkMode;
-                    if (this.darkMode) { document.documentElement.classList.add('dark'); }
-                    else { document.documentElement.classList.remove('dark'); }
+                    if (this.darkMode) document.documentElement.classList.add('dark');
+                    else document.documentElement.classList.remove('dark');
                 },
-
-                categories: [
-                    { name: 'Graduation', name_hi: 'ग्रेजुएशन', slug: 'graduation', icon: '🎓', count: '120+' },
-                    { name: 'Post Grad', name_hi: 'पोस्ट ग्रेजुएशन', slug: 'pg', icon: '🏛️', count: '85+' },
-                    { name: 'UGC NET', name_hi: 'UGC NET', slug: 'competitive', icon: '📚', count: '45+' },
-                    { name: 'SSC CGL', name_hi: 'SSC CGL', slug: 'competitive', icon: '🏛️', count: '60+' },
-                    { name: 'Banking', name_hi: 'बैंकिंग', slug: 'competitive', icon: '🏦', count: '50+' },
-                    { name: 'UPSC IAS', name_hi: 'UPSC', slug: 'competitive', icon: '⚖️', count: '30+' }
-                ],
 
                 courses: [
-                    { title: 'BA Complete Batch 2026', category: 'Graduation', lessons: 120, duration: '180 hrs', teacher: 'Dr. R. K. Sharma', price: '₹1,499', description: 'Complete History, Political Science & Economics syllabus for BA exams.' },
-                    { title: 'BSc Physics & Maths Special', category: 'Graduation', lessons: 95, duration: '140 hrs', teacher: 'Prof. Anil Kumar', price: '₹1,999', description: 'Comprehensive lecture series with solved numericals for BSc students.' },
-                    { title: 'UGC NET Paper 1 Mastery', category: 'Competitive', lessons: 80, duration: '110 hrs', teacher: 'Dr. Meenakshi Das', price: '₹2,499', description: 'Complete Teaching Aptitude, Research Methodology & Logical Reasoning.' },
-                    { title: 'MA Economics Masterclass', category: 'Post Graduation', lessons: 110, duration: '160 hrs', teacher: 'Dr. V. K. Mehta', price: '₹2,999', description: 'Micro, Macro, Econometrics & Indian Economy for MA & CUET PG.' },
-                    { title: 'SSC CGL Tier 1 + 2 Complete', category: 'Competitive', lessons: 210, duration: '300 hrs', teacher: 'Vikram Singh', price: '₹1,999', description: 'Maths, Reasoning, English & GS with short tricks and speed tests.' },
-                    { title: 'Banking PO / Clerk Batch', category: 'Competitive', lessons: 150, duration: '220 hrs', teacher: 'Pooja Verma', price: '₹1,799', description: 'Quantitative Aptitude, Data Interpretation & Banking Awareness.' }
+                    { title: 'BA Complete Batch 2026', category: 'Graduation', teacher: 'Dr. R. K. Sharma', price: '₹1,499', description: 'Complete History, Political Science & Economics syllabus for BA exams.' },
+                    { title: 'BSc Physics & Maths Special', category: 'Graduation', teacher: 'Prof. Anil Kumar', price: '₹1,999', description: 'Comprehensive lecture series with solved numericals for BSc students.' },
+                    { title: 'UGC NET Paper 1 Mastery', category: 'Competitive', teacher: 'Dr. Meenakshi Das', price: '₹2,499', description: 'Complete Teaching Aptitude, Research Methodology & Logical Reasoning.' },
+                    { title: 'MA Economics Masterclass', category: 'Post Graduation', teacher: 'Dr. V. K. Mehta', price: '₹2,999', description: 'Micro, Macro, Econometrics & Indian Economy for MA & CUET PG.' }
                 ],
-
-                get filteredCourses() {
-                    let list = this.courses;
-                    if (this.selectedCategory !== 'all') {
-                        list = list.filter(c => c.category.toLowerCase().includes(this.selectedCategory));
-                    }
-                    if (this.searchQuery.trim()) {
-                        let q = this.searchQuery.toLowerCase();
-                        list = list.filter(c => c.title.toLowerCase().includes(q) || c.description.toLowerCase().includes(q));
-                    }
-                    return list;
-                },
 
                 testsList: [
-                    { title: 'UGC NET Paper 1 Full Mock Test', type: 'Full Mock', questions: 50, marks: 100, time: 60 },
-                    { title: 'BA History PYQ Paper 2025', type: 'PYQ', questions: 100, marks: 100, time: 120 },
-                    { title: 'SSC CGL Quantitative Aptitude Speed Test', type: 'Topic Test', questions: 25, marks: 50, time: 20 },
-                    { title: 'BSc Mathematics Weekly Quiz', type: 'Daily Quiz', questions: 20, marks: 40, time: 15 },
-                    { title: 'Banking General Awareness Mock', type: 'Live Test', questions: 40, marks: 40, time: 25 },
-                    { title: 'MA Political Science Entrance Mock', type: 'Full Mock', questions: 100, marks: 200, time: 120 }
+                    { title: 'UGC NET Paper 1 Full Mock Test', type: 'Full Mock', questions: 50, time: 60 },
+                    { title: 'BA History PYQ Paper 2025', type: 'PYQ', questions: 100, time: 120 },
+                    { title: 'SSC CGL Quantitative Aptitude Speed Test', type: 'Topic Test', questions: 25, time: 20 }
                 ],
 
-                aiMessages: [
-                    { sender: 'ai', text: 'Namaste! 🙏 Main aapka Samajh AI Tutor hoon. Aap mujhse koi bhi question Hindi ya English mein pooch sakte hain!' }
-                ],
-
-                userQuery: '',
-                sendAiMessage() {
-                    if (!this.userQuery.trim()) return;
-                    let q = this.userQuery.trim();
-                    this.aiMessages.push({ sender: 'user', text: q });
-                    this.userQuery = '';
-
-                    setTimeout(() => {
-                        let reply = 'Aapka question "' + q + '" receive ho gaya hai!\n\nKey Concepts:\n1. Complete step-by-step revision solution.\n2. Important formulas and exam tips.\n\nAap is topic par hamare mock tests bhi attempt kar sakte hain!';
-                        if (q.toLowerCase().includes('ugc net')) {
-                            reply = 'UGC NET Paper 1 mein 10 units hoti hain:\n1. Teaching Aptitude\n2. Research Aptitude\n3. Comprehension\n4. Communication\n5. Mathematical Reasoning\n\nAap iska test attempt karne ke liye Test Series tab mein ja sakte hain!';
-                        }
-                        this.aiMessages.push({ sender: 'ai', text: reply });
-                        let b = document.getElementById('chatBox');
-                        if (b) b.scrollTop = b.scrollHeight;
-                    }, 500);
-                },
-
-                leaderboard: [
-                    { name: 'Rahul Verma', exam: 'UGC NET JRF 2025', score: '2,840' },
-                    { name: 'Priya Srivastava', exam: 'SSC CGL AIR 14', score: '2,750' },
-                    { name: 'Amit Kumar', exam: 'BA History Topper', score: '2,690' },
-                    { name: 'Neha Gupta', exam: 'Banking PO Selected', score: '2,580' },
-                    { name: 'Saurabh Pandey', exam: 'MA Economics AIR 3', score: '2,420' }
-                ],
-
-                enrollCourse(course) {
-                    alert('Enrolling in ' + course.title + '\nPrice: ' + course.price + '\n\nRedirecting to interactive student portal...');
-                },
-
-                startTest(test) {
-                    alert('Starting ' + test.title + '\nQuestions: ' + test.questions + ' | Time: ' + test.time + ' mins\n\nNTA Test Engine Loaded!');
+                loginAs(email, role, name) {
+                    this.authEmail = email;
+                    this.userRole = role;
+                    this.userName = name;
+                    this.isLoggedIn = true;
+                    this.showAuthModal = false;
+                    if (role === 'admin') {
+                        this.activeTab = 'admin';
+                    }
                 },
 
                 submitAuth() {
-                    alert('Logged in as ' + this.authEmail + '!\nWelcome to Lo Samajh Lo Dashboard.');
-                    this.showAuthModal = false;
+                    if (this.authEmail.includes('admin')) {
+                        this.loginAs(this.authEmail, 'admin', 'Super Admin');
+                    } else {
+                        this.loginAs(this.authEmail, 'student', 'Student');
+                    }
+                },
+
+                logout() {
+                    this.isLoggedIn = false;
+                    this.userRole = 'guest';
+                    this.userName = '';
+                    this.activeTab = 'home';
+                },
+
+                saveCourse() {
+                    if (!this.newCourse.title.trim()) return;
+                    this.courses.unshift({ ...this.newCourse });
+                    alert('Course "' + this.newCourse.title + '" successfully uploaded!');
+                    this.showUploadCourseModal = false;
+                    this.newCourse = { title: '', category: 'Graduation', teacher: 'Dr. R. K. Sharma', price: '₹1,499', description: '' };
+                },
+
+                saveTest() {
+                    if (!this.newTest.title.trim()) return;
+                    this.testsList.unshift({ ...this.newTest });
+                    alert('Test Series "' + this.newTest.title + '" successfully created!');
+                    this.showUploadTestModal = false;
+                    this.newTest = { title: '', type: 'Full Mock', questions: 50, time: 60 };
                 }
             }
         }
